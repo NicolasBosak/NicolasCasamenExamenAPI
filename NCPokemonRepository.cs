@@ -1,14 +1,17 @@
 using NicolasCasamenExamenAPI.NCModels;
+using NicolasCasamenExamenAPI.NCServices;
 using SQLite;
-namespace NicolasCasamenExamenAPI;
 
-public class NCPokemonRepository 
+public class NCPokemonRepository
 {
-    string _dbPath;
-
+    private string _dbPath;
     public string StatusMessage { get; set; }
-
     private SQLiteAsyncConnection conn;
+
+    public NCPokemonRepository(string dbPath)
+    {
+        _dbPath = dbPath;
+    }
 
     private async Task Init()
     {
@@ -16,36 +19,29 @@ public class NCPokemonRepository
             return;
 
         conn = new SQLiteAsyncConnection(_dbPath);
-
         await conn.CreateTableAsync<NCPokemon>();
     }
 
-    public NCPokemonRepository(string dbPath)
-    {
-        _dbPath = dbPath;
-    }
-
-    public async Task AddNewPerson(string name)
+    public async Task AddNewPokemon(NCPokemon pokemon)
     {
         int result = 0;
         try
         {
             await Init();
 
-            if (string.IsNullOrEmpty(name))
-                throw new Exception("Valid name required");
+            if (pokemon == null || string.IsNullOrEmpty(pokemon.Name))
+                throw new Exception("Se necesita un Pokemon");
 
-            result = await conn.InsertAsync(new NCPokemon { Name = name });
-
-            StatusMessage = string.Format("{0} record(s) added [Name: {1})", result, name);
+            result = await conn.InsertAsync(pokemon);
+            StatusMessage = string.Format("{0} record(s) added [Name: {1})", result, pokemon.Name);
         }
         catch (Exception ex)
         {
-            StatusMessage = string.Format("Failed to add {0}. Error: {1}", name, ex.Message);
+            StatusMessage = string.Format("Failed to add {0}. Error: {1}", pokemon.Name, ex.Message);
         }
     }
 
-    public async Task<List<NCPokemon>> GetAllPeople()
+    public async Task<List<NCPokemon>> GetAllPokemon()
     {
         try
         {

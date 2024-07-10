@@ -4,9 +4,14 @@ namespace NicolasCasamenExamenAPI
 {
     public partial class MainPage : ContentPage
     {
+        private NCPokemonRepository _pokemonRepository;
+
         public MainPage()
         {
             InitializeComponent();
+            string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "pokemon.db3");
+            _pokemonRepository = new NCPokemonRepository(dbPath);
+            GetAllPokemon();
         }
 
         private async void OnSearchButtonClicked(object sender, EventArgs e)
@@ -21,8 +26,11 @@ namespace NicolasCasamenExamenAPI
                 if (pokemon != null)
                 {
                     nameLabel.Text = $"Name: {pokemon.Name}";
-                    heightLabel.Text = $"Height: {pokemon.Height}";
-                    weightLabel.Text = $"Weight: {pokemon.Weight}";
+                    heightLabel.Text = $"Height: {pokemon.Height} Pulgadas";
+                    weightLabel.Text = $"Weight: {pokemon.Weight} Libras";
+
+                    await _pokemonRepository.AddNewPokemon(pokemon);
+                    statusMessage.Text = _pokemonRepository.StatusMessage;
                 }
                 else
                 {
@@ -31,6 +39,19 @@ namespace NicolasCasamenExamenAPI
                     weightLabel.Text = string.Empty;
                 }
             }
+        }
+
+        private async void GetAllPokemon()
+        {
+            List<NCPokemon> allPokemon = await _pokemonRepository.GetAllPokemon();
+            ListaPokemon.ItemsSource = allPokemon;
+        }
+
+        private async void OnGetButtonClicked(object sender, EventArgs e)
+        {
+            List<NCPokemon> allPokemon = await _pokemonRepository.GetAllPokemon();
+            ListaPokemon.ItemsSource = allPokemon;
+            GetAllPokemon();
         }
     }
 

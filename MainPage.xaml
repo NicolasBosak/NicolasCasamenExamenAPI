@@ -5,12 +5,26 @@
 
     <ContentPage.Content>
         <StackLayout Padding="10">
-            <Entry x:Name="pokemonEntry" Placeholder="Enter Pokémon name"/>
-            <Button Text="Search" Clicked="OnSearchButtonClicked"/>
 
-            <Label x:Name="nameLabel" Text="Name:" FontSize="20"/>
-            <Label x:Name="heightLabel" Text="Height:" FontSize="20"/>
-            <Label x:Name="weightLabel" Text="Weight:" FontSize="20"/>
+            <Entry x:Name="pokemonEntry" Placeholder="Ingresa el nombre de tu Pokemon" />
+            <Button Text="Buscar Pokemon" Clicked="OnSearchButtonClicked"/>
+
+            <Label x:Name="statusMessage" TextColor="{StaticResource Primary}" Grid.Row="2" />
+            <Label x:Name="nameLabel" Text="Nombre:" FontSize="20"/>
+            <Label x:Name="heightLabel" Text="Altura:" FontSize="20"/>
+            <Label x:Name="weightLabel" Text="Peso:" FontSize="20"/>
+
+            <Button Text="Mostrar todos tus Pokemon" Grid.Row="3" Clicked="OnGetButtonClicked" />
+        <CollectionView x:Name="ListaPokemon" Grid.Row="4">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid ColumnDefinitions="*,2*">
+                        <Label Text="{Binding Id}" TextColor="{StaticResource Primary}"/>
+                        <Label Grid.Column="1" Text="{Binding Name}" TextColor="{StaticResource Primary}"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

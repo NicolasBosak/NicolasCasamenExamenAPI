@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using SQLite;
 
 namespace NicolasCasamenExamenAPI
 {
@@ -16,7 +16,8 @@ namespace NicolasCasamenExamenAPI
                 });
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+            string dbPath = FileAccessHelper.GetLocalFilePath("NCPokemon.db3");
+            builder.Services.AddSingleton<NCPokemonRepository>(s => ActivatorUtilities.CreateInstance<NCPokemonRepository>(s, dbPath));
 #endif
 
             return builder.Build();
