@@ -1,24 +1,36 @@
-﻿namespace NicolasCasamenExamenAPI
+﻿using NicolasCasamenExamenAPI.NCModels;
+using NicolasCasamenExamenAPI.NCServices;
+namespace NicolasCasamenExamenAPI
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
-
         public MainPage()
         {
             InitializeComponent();
         }
 
-        private void OnCounterClicked(object sender, EventArgs e)
+        private async void OnSearchButtonClicked(object sender, EventArgs e)
         {
-            count++;
+            string pokemonName = pokemonEntry.Text;
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
+            if (!string.IsNullOrEmpty(pokemonName))
+            {
+                NCPokeServices client = new NCPokeServices();
+                NCPokemon pokemon = await client.GetPokemonAsync(pokemonName);
 
-            SemanticScreenReader.Announce(CounterBtn.Text);
+                if (pokemon != null)
+                {
+                    nameLabel.Text = $"Name: {pokemon.Name}";
+                    heightLabel.Text = $"Height: {pokemon.Height}";
+                    weightLabel.Text = $"Weight: {pokemon.Weight}";
+                }
+                else
+                {
+                    nameLabel.Text = "Pokémon not found";
+                    heightLabel.Text = string.Empty;
+                    weightLabel.Text = string.Empty;
+                }
+            }
         }
     }
 
